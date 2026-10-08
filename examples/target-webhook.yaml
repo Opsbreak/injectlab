@@ -1,0 +1,23 @@
+# Generic JSON webhook for a custom agent backend. injectlab POSTs the conversation and tools,
+# your service returns the next assistant message (and any tool calls); injectlab executes the
+# tool calls against the scenario's sandboxed mocks and posts the results back on the next turn.
+type: http
+name: support-agent-staging
+url: https://agent.staging.example.internal/v1/step
+headers:
+  Authorization: "Bearer ${AGENT_API_TOKEN}"   # expanded from the environment at request time
+# Optional request body template. "$messages", "$tools", "$system" and "$last_user" are replaced
+# with the provider-neutral conversation; omit `body` to send {"messages": [...], "tools": [...]}.
+body:
+  conversation: $messages
+  available_tools: $tools
+  session: {mode: eval}
+# JSONPath-style mapping from your response to the assistant turn.
+response:
+  content: $.output.text
+  tool_calls: $.output.actions          # list; each element is mapped with the paths below
+  tool_name: $.tool
+  tool_arguments: $.input                # object or JSON-encoded string
+  tool_id: $.id
+timeout: 60
+max_retries: 3

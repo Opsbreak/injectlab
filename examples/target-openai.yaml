@@ -1,0 +1,13 @@
+# OpenAI-compatible endpoint (OpenAI, vLLM, Ollama, LiteLLM, OpenRouter, Azure-compatible gateways).
+# The API key is read from the environment variable named in api_key_env; it is never written
+# to results, transcripts or reports.
+type: openai
+base_url: https://api.openai.com/v1      # e.g. http://localhost:11434/v1 for Ollama
+model: gpt-4o-mini                       # any model with tool/function calling
+api_key_env: OPENAI_API_KEY
+params:                                  # merged into every request body
+  temperature: 0
+timeout: 60                              # seconds per request
+max_retries: 4                           # 408/409/425/429/5xx/529 and network errors
+backoff_base: 1.0
+backoff_max: 30
